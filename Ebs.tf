@@ -24,3 +24,4 @@ resource "aws_instance" "example" {
     volume_id   = aws_ebs_volume.example.id
   }
 }
+# myebsvolume
