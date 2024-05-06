@@ -1,25 +1,28 @@
-name: Link Checker: All English
+name: My First GitHub Actions
 
-on:
-  workflow_dispatch: # Manually run this workflow from the UI
-  push:
-    branches:
-      - main # Automatically run every time a commit is pushed to the main branch
-  pull_request: # Automatically run every time a pull request is created or updated
+on: [push]
 
-permissions:
-  contents: read
-  pull-requests: read # Needed for the trilom/file-changes-action used later in this workflow
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9]
 
-steps:
-  - name: Checkout Repository
-    uses: actions/checkout@v2 # This action checks out your repository and downloads it to the runner
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
 
-  - name: Install Node.js
-    uses: actions/setup-node@v2
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
 
-  - name: Run Link Checker Script
-    run: ./script/rendered-content-link-checker.mjs
-
+    - name: Run tests
+      run: |
+        cd src
+        python -m pytest addition.py
